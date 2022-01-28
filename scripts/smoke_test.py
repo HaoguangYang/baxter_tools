@@ -138,7 +138,7 @@ def main():
         return 1
 
     try:
-        raw_input("Press <Enter> to Begin Smoke Test\n")
+        input("Press <Enter> to Begin Smoke Test\n")
     except Exception:
         print("\nExiting.")
         return 1
@@ -150,7 +150,7 @@ def main():
                  cur_time.tm_year, test_dict['version'],)
                 )
     if args.test == None:
-        print 'Performing All Tests'
+        print('Performing All Tests')
         ros_init()
         for t in test_dict['valid_tests'][test_dict['version']]:
             run_test(t, filename, args.proceed)

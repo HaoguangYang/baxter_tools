@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 
 # Copyright (c) 2013-2015, Rethink Robotics
 # All rights reserved.
@@ -164,9 +164,9 @@ def run_update(updater, uuid):
 
     try:
         updater.command_update(uuid)
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.EINVAL:
-            print e.strerror
+            print(e.strerror)
             return 1
         raise
 
@@ -176,9 +176,9 @@ def run_update(updater, uuid):
             timeout=5 * 60,
             timeout_msg="Timeout waiting for update to succeed"
         )
-    except Exception, e:
+    except Exception as e:
         if not (hasattr(e, 'errno') and e.errno == errno.ESHUTDOWN):
-            print e.strerror
+            print(e.strerror)
         nl.rc = 1
 
     return nl.rc
@@ -192,19 +192,17 @@ def ros_updateable_version():
     """
     ros_updateable = True
 
-    def get_robot_version():
-        param_name = "rethink/software_version"
-        robot_version = rospy.get_param(param_name, None)
-        # parse out first 3 digits of robot version tag
-        pattern = ("^([0-9]+)\.([0-9]+)\.([0-9]+)")
-        match = re.search(pattern, robot_version)
-        if not match:
-            rospy.logwarn("RobotUpdater: Invalid robot version: %s",
-                          robot_version)
-            return None
-        return match.string[match.start(1):match.end(3)]
+    param_name = "rethink/software_version"
+    robot_version = rospy.get_param(param_name, None)
+    # parse out first 3 digits of robot version tag
+    pattern = ("^([0-9]+)\.([0-9]+)\.([0-9]+)")
+    match = re.search(pattern, robot_version)
+    if not match:
+        rospy.logwarn("RobotUpdater: Invalid robot version: %s",
+                      robot_version)
+        robot_version = None
+    robot_version = match.string[match.start(1):match.end(3)]
 
-    robot_version = get_robot_version()
     if not robot_version:
         rospy.logerr("RobotUpdater: Failed to retrieve robot version "
                      "from rosparam: %s\n"
@@ -266,13 +264,13 @@ def main():
         return 0
     elif cmd == 'update':
         if uuid == '':
-            print "Error:  no update uuid specified"
+            print("Error:  no update uuid specified")
             return 1
         msg = ("NOTE: Please plug in any Rethink Electric Parallel Grippers\n"
                "      into the robot now, so that the Gripper Firmware\n"
                "      can be automatically upgraded with the robot.\n")
         print (msg)
-        raw_input("Press <Enter> to Continue...")
+        input("Press <Enter> to Continue...")
         if rospy.is_shutdown():
             return 0
         return run_update(updater, uuid)
